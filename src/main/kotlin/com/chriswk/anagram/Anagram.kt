@@ -28,7 +28,9 @@ class Anagram {
             permute(word, it).map {
                 Pair(it, anagramForWord(it))
             }
-        }.toMap()
+        }.toMap().filter {
+            it.value.isNotEmpty()
+        }
     }
 
     fun permute(word: String, charCount: Int): List<String> = combinations(charCount, word.toList()).map { it.joinToString(separator = "") }

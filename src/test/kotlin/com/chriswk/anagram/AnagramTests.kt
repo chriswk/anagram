@@ -27,6 +27,12 @@ class AnagramTests {
     }
 
     @Test
+    fun aNonExistantWordShouldResultInAnEmptyList() {
+        val a = Anagram()
+        val anagrams = a.anagramsFor("lter", 4)
+        assertThat(anagrams).isEmpty()
+    }
+    @Test
     fun shouldPermuteStringCorrectly() {
         val a = Anagram()
         val perms: List<String> = a.permute("ret", 2)
