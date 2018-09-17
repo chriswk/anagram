@@ -1,6 +1,7 @@
 package com.chriswk.anagram
 
 import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -18,6 +19,7 @@ class AnagramController {
     }
 
     @GetMapping("/anagram", produces = ["application/json"])
+    @CrossOrigin()
     @ResponseBody
     fun getAnagramsFor(@RequestParam("word") word: String): Map<String, List<String>> {
         return mapOf(Pair("anagrams", anagram.anagramsFor(word).values.flatten()))
