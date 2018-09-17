@@ -1,23 +1,21 @@
 package com.chriswk.anagram
 
 import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.bind.annotation.*
 
 @Controller
 class AnagramController {
     val anagram: Anagram = Anagram()
 
-    @RequestMapping("/anagram", produces = ["application/json"])
+    @PostMapping("/anagram", produces = ["application/json"])
     @ResponseBody
-    fun getAnagramsFor(@RequestBody anagramRequest: AnagramRequest): Map<String, List<String>> {
+    fun postAnagramsFor(@RequestBody anagramRequest: AnagramRequest): Map<String, List<String>> {
         return anagram.anagramsFor(anagramRequest.word, anagramRequest.minChars)
     }
 
-    @RequestMapping("/test", produces = ["application/json"])
+    @GetMapping("/anagram", produces = ["application/json"])
     @ResponseBody
-    fun testBody(@RequestBody anagramRequest: AnagramRequest): AnagramRequest {
-        return anagramRequest
+    fun getAnagramsFor(@RequestParam("word") word: String): Map<String, List<String>> {
+        return mapOf(Pair("anagrams", anagram.anagramsFor(word).values.flatten()))
     }
 }
