@@ -24,9 +24,4 @@ class AnagramController {
         return anagramRequest
     }
 
-    @GetMapping("/anagram", produces = ["text/html"])
-    fun getAnagramsFor(@RequestParam("word") word: String, model: ModelMap): String {
-        model.addAttribute("anagrams", anagram.anagramsFor(word, 3))
-        return "anagrams"
-    }
 }
