@@ -24,19 +24,14 @@ class Anagram {
     }
 
     fun anagramsFor(word: String, minChars: Int = 3): Map<String, List<String>> {
-        if (word.length <= minChars) {
-            return mapOf(Pair(word, anagramForWord(word)))
-        } else {
-            return IntRange(minChars, word.length).flatMap {
-                permute(word, it).map {
-                    Pair(it, anagramForWord(it))
-                }
-            }.toMap()
-        }
+        return IntRange(minChars, word.length).flatMap {
+            permute(word, it).map {
+                Pair(it, anagramForWord(it))
+            }
+        }.toMap()
     }
 
     fun permute(word: String, charCount: Int): List<String> = combinations(charCount, word.toList()).map { it.joinToString(separator = "") }
-
 
     fun <T> combinations(n: Int, list: List<T>): List<List<T>> =
             if (n == 0) listOf(emptyList())
@@ -49,7 +44,4 @@ class Anagram {
             else f(this) + this.tail().flatMapTails(f)
 
     fun <T> List<T>.tail(): List<T> = drop(1)
-
 }
-
-
