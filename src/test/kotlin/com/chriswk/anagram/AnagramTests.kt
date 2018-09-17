@@ -22,7 +22,7 @@ class AnagramTests {
     fun shouldFindAllAnagramsFromSowpods() {
         val a = Anagram()
         val anagrams: Map<String, List<String>> = a.anagramsFor("retail")
-        assertThat(anagrams).hasSize(42)
+        assertThat(anagrams).hasSize(34)
         assertThat(anagrams["aer"]).containsAll(listOf("are", "ear", "era"))
     }
 
