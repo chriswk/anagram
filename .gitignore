@@ -23,4 +23,6 @@
 /nbbuild/
 /dist/
 /nbdist/
-/.nb-gradle/
+
+
+.attach_pid*
