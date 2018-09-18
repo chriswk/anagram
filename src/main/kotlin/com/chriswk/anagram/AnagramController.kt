@@ -21,7 +21,12 @@ class AnagramController {
     @GetMapping("/anagram", produces = ["application/json"])
     @CrossOrigin()
     @ResponseBody
-    fun getAnagramsFor(@RequestParam("word") word: String): Map<String, List<String>> {
-        return mapOf(Pair("anagrams", anagram.anagramsFor(word).values.flatten()))
+    fun getAnagramsFor(@RequestParam("word") word: String, @RequestParam("minCount", required = false, defaultValue = "3") minCount: Int): Map<String, List<String>> {
+        return mapOf(Pair("anagrams", anagram.anagramsFor(word, minCount).values.flatten()))
+    }
+
+    @GetMapping("/")
+    fun redirectToFrontend(): String {
+        return "redirect:https://anagramfrontend.herokuapp.com"
     }
 }
