@@ -40,3 +40,8 @@ jobs:
         
       # run tests!
       - run: gradle test
+deployment:
+  prod:
+    branch: master
+    heroku:
+      appname: anagrambackend
