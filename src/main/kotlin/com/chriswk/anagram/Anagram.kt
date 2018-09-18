@@ -15,7 +15,7 @@ class Anagram {
         sowpods.split("\n").map { it.toLowerCase(Locale.ENGLISH) }.groupBy { product(it) }
     }
 
-    fun product(word: String): Long = word.toCharArray().map { primeMap[it] }.fold(1L) { x, y ->
+    fun product(word: String): Long = word.toLowerCase(Locale.ENGLISH).toCharArray().map { primeMap[it] }.fold(1L) { x, y ->
         x * (y ?: 1)
     }
 

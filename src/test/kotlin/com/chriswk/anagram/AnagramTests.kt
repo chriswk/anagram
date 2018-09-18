@@ -44,4 +44,11 @@ class AnagramTests {
         val a = Anagram()
         assertThat(a.permute("retail", 6)).hasSize(1)
     }
+
+    @Test
+    fun casingShouldNotMatter() {
+        val a = Anagram()
+        assertThat(a.product("Retail")).isEqualTo(a.product("retail"))
+        assertThat(a.product("RETAIL")).isEqualTo(a.product("ReTaIL"))
+    }
 }
