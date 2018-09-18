@@ -23,14 +23,12 @@ class Anagram {
         return anagramsMap[product(word)] ?: emptyList()
     }
 
-    fun anagramsFor(word: String, minChars: Int = 3): Map<String, List<String>> {
+    fun anagramsFor(word: String, minChars: Int = 3): Map<Int, List<String>> {
         return IntRange(minChars, word.length).flatMap {
-            permute(word, it).map {
-                Pair(it, anagramForWord(it))
+            permute(word, it).flatMap { w ->
+                anagramForWord(w)
             }
-        }.toMap().filter {
-            it.value.isNotEmpty()
-        }
+        }.asSequence().distinct().groupBy { it.length }.mapValues { it.value.sorted() }
     }
 
     fun permute(word: String, charCount: Int): List<String> = combinations(charCount, word.toList()).map { it.joinToString(separator = "") }

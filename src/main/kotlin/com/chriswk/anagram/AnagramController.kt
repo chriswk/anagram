@@ -14,7 +14,7 @@ class AnagramController {
 
     @PostMapping("/anagram", produces = ["application/json"])
     @ResponseBody
-    fun postAnagramsFor(@RequestBody anagramRequest: AnagramRequest): Map<String, List<String>> {
+    fun postAnagramsFor(@RequestBody anagramRequest: AnagramRequest): Map<Int, List<String>> {
         return anagram.anagramsFor(anagramRequest.word, anagramRequest.minChars)
     }
 

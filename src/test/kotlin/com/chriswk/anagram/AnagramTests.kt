@@ -21,9 +21,12 @@ class AnagramTests {
     @Test
     fun shouldFindAllAnagramsFromSowpods() {
         val a = Anagram()
-        val anagrams: Map<String, List<String>> = a.anagramsFor("retail")
-        assertThat(anagrams).hasSize(34)
-        assertThat(anagrams["aer"]).containsAll(listOf("are", "ear", "era"))
+        val anagrams: Map<Int, List<String>> = a.anagramsFor("retail")
+        assertThat(anagrams[3]).hasSize(35)
+        assertThat(anagrams[4]).hasSize(46)
+        assertThat(anagrams[5]).hasSize(19)
+        assertThat(anagrams[6]).hasSize(3)
+        assertThat(anagrams.values.flatten()).hasSize(103)
     }
 
     @Test
@@ -50,5 +53,24 @@ class AnagramTests {
         val a = Anagram()
         assertThat(a.product("Retail")).isEqualTo(a.product("retail"))
         assertThat(a.product("RETAIL")).isEqualTo(a.product("ReTaIL"))
+    }
+
+    @Test
+    fun shouldEliminateDuplicates() {
+        val a = Anagram()
+        val anagrams = a.anagramsFor("application", 10)
+        assertThat(anagrams[11]).containsOnly("application")
+        assertThat(anagrams[10]).containsOnly("capitolian", "panoptical")
+        assertThat(anagrams.values.flatten()).hasSize(3)
+    }
+
+    @Test
+    fun shouldBeSortedAlphabetically() {
+        val a = Anagram()
+        val anagrams = a.anagramsFor("application", 9)
+        assertThat(anagrams[11]).containsExactly("application")
+        assertThat(anagrams[10]).containsExactly("capitolian", "panoptical")
+        assertThat(anagrams[9]).containsExactly("ancipital", "applicant", "pactional", "palinopia", "palpation", "placation", "plication")
+        assertThat(anagrams.values.flatten()).hasSize(10)
     }
 }
