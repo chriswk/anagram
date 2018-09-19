@@ -6,16 +6,9 @@ import org.junit.Test
 class AnagramTests {
 
     @Test
-    fun productOfTwoWordsShouldBeEqualIfTheyAreAnagrams() {
+    fun aTooLongWordGivesEmpty() {
         val a = Anagram()
-        assertThat(a.product("retail")).isEqualTo(a.product("tailer"))
-    }
-
-    @Test
-    fun productOfTwoDifferentWordsShouldNotBeEqual() {
-        val a = Anagram()
-        assertThat(a.product("retail")).isNotEqualTo("ttailer")
-        assertThat(a.product("late")).isNotEqualTo("eat")
+        assertThat(a.anagramsFor("zzzzzzzzzzzzzzzzzzzzzzzzz")).isEmpty()
     }
 
     @Test
@@ -51,8 +44,6 @@ class AnagramTests {
     @Test
     fun casingShouldNotMatter() {
         val a = Anagram()
-        assertThat(a.product("Retail")).isEqualTo(a.product("retail"))
-        assertThat(a.product("RETAIL")).isEqualTo(a.product("ReTaIL"))
     }
 
     @Test
@@ -85,5 +76,20 @@ class AnagramTests {
         assertThat(anagrams[3]).hasSize(44)
         assertThat(anagrams).doesNotContainKey(2)
         assertThat(anagrams.values.flatten()).hasSize(136)
+    }
+
+    @Test
+    fun shouldHandleNorwegianSpecialChars() {
+        val a = Anagram()
+        val anagrams = a.anagramsFor("fårepølse", 3, language = "no")
+        assertThat(anagrams[9]).containsExactly("fårepølse")
+        assertThat(anagrams).doesNotContainKey(8)
+        assertThat(anagrams[7]).containsExactly("felåser", "leprøse", "påføres")
+        assertThat(anagrams[6]).hasSize(26)
+        assertThat(anagrams[5]).hasSize(61)
+        assertThat(anagrams[4]).hasSize(82)
+        assertThat(anagrams[3]).hasSize(55)
+        assertThat(anagrams).doesNotContainKey(2)
+        assertThat(anagrams.values.flatten()).hasSize(228)
     }
 }

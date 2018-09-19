@@ -11,34 +11,60 @@ class Anagram {
             127L, 131L, 137L, 139L, 149L,
             151L, 157L, 163L, 167L)
     val primeMap: Map<Char, Long> = CharRange('a', 'z').plus(arrayOf('æ', 'ø', 'å')).zip(primes).toMap()
-    val anagramsMapEn: Map<Long, List<String>> by lazy {
-        Anagram::class.java.classLoader.getResource("sowpods.dat")
-                .readText()
-                .split("\n")
-                .map { it.toLowerCase(Locale.ENGLISH) }
-                .groupBy { product(it) }
+
+    val englishWords: Sequence<String> by lazy {
+        readWordsFrom("sowpods.dat")
     }
-    val anagramsMapNo: Map<Long, List<String>> by lazy {
-        Anagram::class.java.classLoader.getResource("norsk.dat")
-                .readText()
-                .split("\n")
+    val norwegianWords: Sequence<String> by lazy {
+        readWordsFrom("norsk.dat")
+    }
+    val anagramsMapEn: Map<String, List<String>> by lazy {
+        englishWords
+                .map { it.toLowerCase(Locale.ENGLISH) }
+                .groupBy { it.asSequence().sorted().joinToString("") }
+    }
+    val anagramsMapNo: Map<String, List<String>> by lazy {
+        norwegianWords
                 .map { it.toLowerCase(noLocale) }
-                .groupBy { product(it, noLocale) }
+                .groupBy { it.asSequence().sorted().joinToString("") }
     }
 
-    fun product(word: String, locale: Locale = Locale.ENGLISH): Long = word.toLowerCase(locale).toCharArray().map { primeMap[it] }.fold(1L) { x, y ->
-        x * (y ?: 1)
+    val maxLengthEn: Int = englishWords
+            .map { it.length }
+            .max() ?: 0
+
+    val maxLengthNo: Int = norwegianWords
+            .map { it.length }
+            .max() ?: 0
+
+    private fun readWordsFrom(fileName: String): Sequence<String> {
+        return Anagram::class.java.classLoader.getResource(fileName)
+                .readText()
+                .split("\n")
+                .asSequence()
     }
 
     fun anagramForWord(word: String, language: String = "en"): List<String> {
-        return when(language) {
-            "en" -> anagramsMapEn[product(word)] ?: emptyList()
-            "no" -> anagramsMapNo[product(word)] ?: emptyList()
+        return when (language) {
+            "en" -> anagramsMapEn[word.sorted()] ?: emptyList()
+            "no" -> anagramsMapNo[word.sorted(noLocale)] ?: emptyList()
             else -> emptyList()
         }
     }
 
+    private fun String.sorted(locale: Locale = Locale.ENGLISH): String =
+        this.toLowerCase(locale).asSequence().sorted().joinToString("")
+
     fun anagramsFor(word: String, minChars: Int = 3, language: String = "en"): Map<Int, List<String>> {
+
+        return when (language) {
+            "en" -> if (word.length > maxLengthEn) emptyMap() else internalAnagramsFor(word, minChars, language)
+            "no" -> if (word.length > maxLengthNo) emptyMap() else internalAnagramsFor(word, minChars, language)
+            else -> emptyMap()
+        }
+    }
+
+    private fun internalAnagramsFor(word: String, minChars: Int, language: String): Map<Int, List<String>> {
         return IntRange(minChars, word.length).flatMap {
             permute(word, it).flatMap { w ->
                 anagramForWord(w, language)
