@@ -73,4 +73,17 @@ class AnagramTests {
         assertThat(anagrams[9]).containsExactly("ancipital", "applicant", "pactional", "palinopia", "palpation", "placation", "plication")
         assertThat(anagrams.values.flatten()).hasSize(10)
     }
+
+    @Test
+    fun shouldSupportNorwegianAsWell() {
+        val a = Anagram()
+        val anagrams = a.anagramsFor("harepus", 3, language = "no")
+        assertThat(anagrams[7]).containsExactly("harepus")
+        assertThat(anagrams[6]).containsExactly("harpes", "hasper", "hauser", "hurpes", "pauser", "pusher", "sherpa")
+        assertThat(anagrams[5]).hasSize(29)
+        assertThat(anagrams[4]).hasSize(55)
+        assertThat(anagrams[3]).hasSize(44)
+        assertThat(anagrams).doesNotContainKey(2)
+        assertThat(anagrams.values.flatten()).hasSize(136)
+    }
 }

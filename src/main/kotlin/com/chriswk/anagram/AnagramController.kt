@@ -22,11 +22,11 @@ class AnagramController {
     @GetMapping("/anagram", produces = ["application/json"])
     @CrossOrigin()
     @ResponseBody
-    fun getAnagramsFor(@RequestParam("word") word: String, @RequestParam("minCount", required = false, defaultValue = "3") minCount: Int): Map<String, List<String>> {
+    fun getAnagramsFor(@RequestParam("word") word: String, @RequestParam("minCount", required = false, defaultValue = "3") minCount: Int, @RequestParam("language", required = false, defaultValue = "en") language: String): Map<String, List<String>> {
         if (word.length > 20) {
             throw IllegalArgumentException("Word is too long")
         }
-        return mapOf(Pair("anagrams", anagram.anagramsFor(word, minCount).values.flatten()))
+        return mapOf(Pair("anagrams", anagram.anagramsFor(word, minCount, language).values.flatten()))
     }
 
     @GetMapping("/")
