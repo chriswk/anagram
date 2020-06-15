@@ -29,6 +29,18 @@ class Anagram {
                 .groupBy { it.asSequence().sorted().joinToString("") }
     }
 
+    val pangramsMapEn: Map<String, List<String>> by lazy {
+        englishWords
+                .map { it.toLowerCase(Locale.ENGLISH) }
+                .groupBy { it.asSequence().sorted().toSet().joinToString("") }
+    }
+
+    val pangramMapNo: Map<String, List<String>> by lazy {
+        norwegianWords
+                .map { it.toLowerCase(noLocale) }
+                .groupBy { it.asSequence().sorted().toSet().joinToString("") }
+    }
+
     val maxLengthEn: Int = englishWords
             .map { it.length }
             .max() ?: 0
@@ -50,6 +62,28 @@ class Anagram {
             "no" -> anagramsMapNo[word.sorted(noLocale)] ?: emptyList()
             else -> emptyList()
         }
+    }
+
+    fun pangramForWord(word: String, language: String = "en", mustContain: Char): List<String> {
+        return when(language) {
+            "en" -> pangramsMapEn[word.sorted().toSet().joinToString("")]?.filter { it.contains(mustContain) } ?: emptyList()
+            "no" -> pangramMapNo[word.sorted().toSet().joinToString("")]?.filter { it.contains(mustContain) } ?: emptyList()
+            else -> emptyList()
+        }
+    }
+
+    fun pangram(letters: String, minCount: Int = 4, mustContain: Char, language: String = "en"): List<String> {
+        val words = when(language) {
+            "en" -> pangramsMapEn
+            "no" -> pangramMapNo
+            else -> emptyMap()
+        }
+
+        val f = generateSequence(emptyList<String>() to minCount) { (p, c) ->
+            (p + permute(letters, c) to c + 1)
+        }.takeWhile { it.second < letters.length }.flatMap { it.first.asSequence().filter { it.contains(mustContain) } }.map { it.sorted() }.toSet()
+        val suggestions = f.flatMap { words[it.sorted().toSet().joinToString("")] ?: emptyList() }.toList()
+        return suggestions
     }
 
     private fun String.sorted(locale: Locale = Locale.ENGLISH): String =
