@@ -20,6 +20,14 @@ class Anagram {
     val norwegianWords: Sequence<String> by lazy {
         readWordsFrom("norsk.dat")
     }
+
+    val usWords: Sequence<String> by lazy {
+        wordNetFrom("th_en_US_new.dat")
+    }
+
+    val americanWordNet: Sequence<String> by lazy {
+        wordNetFrom("th_en_US_new.dat")
+    }
     val anagramsMapEn: Map<String, List<String>> by lazy {
         englishWords
             .map { it.toLowerCase(Locale.ENGLISH) }
@@ -31,10 +39,20 @@ class Anagram {
             .groupBy { it.asSequence().sorted().joinToString("") }
     }
 
+    val anagramsMapUs: Map<String, List<String>> by lazy {
+        usWords
+                .map { it.toLowerCase(Locale.ENGLISH) }
+                .groupBy { it.asSequence().sorted().joinToString("") }
+    }
     val pangramsMapEn: Map<String, List<String>> by lazy {
         englishWords
             .map { it.toLowerCase(Locale.ENGLISH) }
             .groupBy { it.asSequence().sorted().toSet().joinToString("") }
+    }
+    val pangramMapUs: Map<String, List<String>> by lazy {
+        usWords
+                .map { it.toLowerCase(Locale.ENGLISH) }
+                .groupBy { it.asSequence().sorted().toSet().joinToString("") }
     }
 
     val pangramMapNo: Map<String, List<String>> by lazy {
@@ -51,17 +69,26 @@ class Anagram {
         .map { it.length }
         .max() ?: 0
 
+    val maxLenghUs: Int = usWords
+            .map { it.length }
+            .max() ?: 0
+
     private fun readWordsFrom(fileName: String): Sequence<String> {
-        return Anagram::class.java.classLoader.getResource(fileName)
+        return Anagram::class.java.getResource("/$fileName")
             .readText()
             .split("\n")
             .asSequence()
+    }
+
+    private fun wordNetFrom(fileName: String): Sequence<String> {
+        return readWordsFrom(fileName).filterNot { it.startsWith("(") }.map { it.split("|").first() }
     }
 
     fun anagramForWord(word: String, language: String = "en"): List<String> {
         return when (language) {
             "en" -> anagramsMapEn[word.sorted()] ?: emptyList()
             "no" -> anagramsMapNo[word.sorted(noLocale)] ?: emptyList()
+            "us" -> anagramsMapUs[word.sorted()] ?: emptyList()
             else -> emptyList()
         }
     }
@@ -70,6 +97,7 @@ class Anagram {
         return when (language) {
             "en" -> pangramsMapEn[word.sorted().toSet().joinToString("")]?.filter { it.contains(mustContain) } ?: emptyList()
             "no" -> pangramMapNo[word.sorted().toSet().joinToString("")]?.filter { it.contains(mustContain) } ?: emptyList()
+            "us" -> pangramMapUs[word.sorted().toSet().joinToString("")]?.filter { it.contains(mustContain) } ?: emptyList()
             else -> emptyList()
         }
     }
@@ -78,6 +106,7 @@ class Anagram {
         val words = when (language) {
             "en" -> pangramsMapEn
             "no" -> pangramMapNo
+            "us" -> pangramMapUs
             else -> emptyMap()
         }
 
@@ -96,6 +125,7 @@ class Anagram {
         return when (language) {
             "en" -> if (word.length > maxLengthEn) emptyMap() else internalAnagramsFor(word, minChars, language)
             "no" -> if (word.length > maxLengthNo) emptyMap() else internalAnagramsFor(word, minChars, language)
+            "us" -> if (word.length > maxLenghUs) emptyMap() else internalAnagramsFor(word, minChars, language)
             else -> emptyMap()
         }
     }

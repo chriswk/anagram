@@ -41,7 +41,7 @@ class AnagramController {
         @RequestParam("language", defaultValue = "en", required = false) language: String,
         @RequestParam("mustcontain") mustContain: Char
     ): Map<String, List<String>> {
-        return mapOf(Pair("pangrams", anagram.pangram(letters, mustContain = mustContain).sortedByDescending { it.length }))
+        return mapOf(Pair("pangrams", anagram.pangram(letters, mustContain = mustContain, language = language).sortedByDescending { it.length }))
     }
 
     @GetMapping("/")
