@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: anagram
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: anagram
+  template:
+    metadata:
+      labels:
+        app: anagram
+    spec:
+      containers:
+        - image: chriswk/anagram:latest
+          name: anagram
+          ports:
+            - containerPort: 8080

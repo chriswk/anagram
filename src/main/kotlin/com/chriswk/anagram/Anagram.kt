@@ -4,15 +4,6 @@ import java.util.Locale
 
 class Anagram {
     val noLocale = Locale.forLanguageTag("no")
-    val primes: List<Long> = listOf(
-        31L, 37L, 41L, 43L, 47L,
-        53L, 59L, 61L, 67L, 71L,
-        73L, 79L, 83L, 89L, 97L,
-        101L, 103L, 107L, 109L, 113L,
-        127L, 131L, 137L, 139L, 149L,
-        151L, 157L, 163L, 167L
-    )
-    val primeMap: Map<Char, Long> = CharRange('a', 'z').plus(arrayOf('æ', 'ø', 'å')).zip(primes).toMap()
 
     val englishWords: Sequence<String> by lazy {
         readWordsFrom("sowpods.dat")
@@ -25,23 +16,20 @@ class Anagram {
         wordNetFrom("th_en_US_new.dat")
     }
 
-    val americanWordNet: Sequence<String> by lazy {
-        wordNetFrom("th_en_US_new.dat")
-    }
     val anagramsMapEn: Map<String, List<String>> by lazy {
         englishWords
-            .map { it.toLowerCase(Locale.ENGLISH) }
+            .map { it.toLowerCase(Locale.ENGLISH).trim() }
             .groupBy { it.asSequence().sorted().joinToString("") }
     }
     val anagramsMapNo: Map<String, List<String>> by lazy {
         norwegianWords
-            .map { it.toLowerCase(noLocale) }
+            .map { it.toLowerCase(noLocale).trim() }
             .groupBy { it.asSequence().sorted().joinToString("") }
     }
 
     val anagramsMapUs: Map<String, List<String>> by lazy {
         usWords
-                .map { it.toLowerCase(Locale.ENGLISH) }
+                .map { it.toLowerCase(Locale.ENGLISH).trim() }
                 .groupBy { it.asSequence().sorted().joinToString("") }
     }
     val pangramsMapEn: Map<String, List<String>> by lazy {
@@ -62,16 +50,16 @@ class Anagram {
     }
 
     val maxLengthEn: Int = englishWords
-        .map { it.length }
-        .max() ?: 0
+            .map { it.length }
+            .maxOrNull() ?: 0
 
     val maxLengthNo: Int = norwegianWords
-        .map { it.length }
-        .max() ?: 0
-
-    val maxLenghUs: Int = usWords
             .map { it.length }
-            .max() ?: 0
+            .maxOrNull() ?: 0
+
+    val maxLengthUs: Int = usWords
+            .map { it.length }
+            .maxOrNull() ?: 0
 
     private fun readWordsFrom(fileName: String): Sequence<String> {
         return Anagram::class.java.getResource("/$fileName")
@@ -112,7 +100,7 @@ class Anagram {
 
         val f = generateSequence(emptyList<String>() to 1) { (p, c) ->
             (p + permute(letters, c) to c + 1)
-        }.takeWhile { it.second <= letters.length + 1 }.flatMap { (w, c) -> w.asSequence().filter { it.contains(mustContain) } }.map { it.sorted() }.toSet()
+        }.takeWhile { it.second <= letters.length + 1 }.flatMap { (w, _) -> w.asSequence().filter { it.contains(mustContain) } }.map { it.sorted() }.toSet()
         val suggestions = f.flatMap { words[it.sorted().toSet().joinToString("")] ?: emptyList() }.toList().filter { it.length >= minCount }
         return suggestions
     }
@@ -125,7 +113,7 @@ class Anagram {
         return when (language) {
             "en" -> if (word.length > maxLengthEn) emptyMap() else internalAnagramsFor(word, minChars, language)
             "no" -> if (word.length > maxLengthNo) emptyMap() else internalAnagramsFor(word, minChars, language)
-            "us" -> if (word.length > maxLenghUs) emptyMap() else internalAnagramsFor(word, minChars, language)
+            "us" -> if (word.length > maxLengthUs) emptyMap() else internalAnagramsFor(word, minChars, language)
             else -> emptyMap()
         }
     }
