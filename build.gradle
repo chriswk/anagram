@@ -44,3 +44,7 @@ spotless {
         ktlint()
     }
 }
+
+bootBuildImage {
+    imageName = "chriswk/anagram:${project.version}"
+}
