@@ -14,7 +14,7 @@ spec:
         app: anagram
     spec:
       containers:
-        - image: chriswk/anagram:latest
+        - image: chriswk/anagram:0.0.1-SNAPSHOT
           name: anagram
           ports:
             - containerPort: 8080
