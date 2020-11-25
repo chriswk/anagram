@@ -1,8 +1,8 @@
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.4.10"
-    id "org.jetbrains.kotlin.plugin.spring" version "1.4.10"
-    id "org.springframework.boot" version "2.3.4.RELEASE"
-    id "io.spring.dependency-management" version "1.0.9.RELEASE"
+    id "org.jetbrains.kotlin.jvm" version "1.4.20"
+    id "org.jetbrains.kotlin.plugin.spring" version "1.4.20"
+    id "org.springframework.boot" version "2.4.0"
+    id "io.spring.dependency-management" version "1.0.10.RELEASE"
     id 'info.solidsoft.pitest' version '1.5.1'
     id 'com.diffplug.gradle.spotless' version '4.3.1'
 }
@@ -10,17 +10,17 @@ plugins {
 
 group = 'com.chriswk'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = 14
+sourceCompatibility = 11
 compileKotlin {
     kotlinOptions {
         freeCompilerArgs = ["-Xjsr305=strict"]
-        jvmTarget = "14"
+        jvmTarget = "11"
     }
 }
 compileTestKotlin {
     kotlinOptions {
         freeCompilerArgs = ["-Xjsr305=strict"]
-        jvmTarget = "14"
+        jvmTarget = "11"
     }
 }
 
@@ -32,10 +32,10 @@ repositories {
 dependencies {
     compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.10")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.4.10")
-    compile('org.springframework.boot:spring-boot-starter-actuator:2.3.4.RELEASE')
-    compile('org.springframework.boot:spring-boot-starter-webflux:2.3.4.RELEASE')
+    compile('org.springframework.boot:spring-boot-starter-actuator')
+    compile('org.springframework.boot:spring-boot-starter-webflux')
     compile('com.fasterxml.jackson.module:jackson-module-kotlin:2.11.1')
-    testImplementation('org.springframework.boot:spring-boot-starter-test:2.3.4.RELEASE')
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation('io.projectreactor:reactor-test')
 }
 
