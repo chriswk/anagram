@@ -74,18 +74,18 @@ class Anagram {
 
     fun anagramForWord(word: String, language: String = "en"): List<String> {
         return when (language) {
-            "en" -> anagramsMapEn[word.sorted()] ?: emptyList()
-            "no" -> anagramsMapNo[word.sorted(noLocale)] ?: emptyList()
-            "us" -> anagramsMapUs[word.sorted()] ?: emptyList()
+            "en" -> anagramsMapEn[word.sortedDistinct()] ?: emptyList()
+            "no" -> anagramsMapNo[word.sortedDistinct(noLocale)] ?: emptyList()
+            "us" -> anagramsMapUs[word.sortedDistinct()] ?: emptyList()
             else -> emptyList()
         }
     }
 
     fun pangramForWord(word: String, language: String = "en", mustContain: Char): List<String> {
         return when (language) {
-            "en" -> pangramsMapEn[word.sorted().toSet().joinToString("")]?.filter { it.contains(mustContain) } ?: emptyList()
-            "no" -> pangramMapNo[word.sorted().toSet().joinToString("")]?.filter { it.contains(mustContain) } ?: emptyList()
-            "us" -> pangramMapUs[word.sorted().toSet().joinToString("")]?.filter { it.contains(mustContain) } ?: emptyList()
+            "en" -> pangramsMapEn[word.sortedDistinct()]?.filter { it.contains(mustContain) } ?: emptyList()
+            "no" -> pangramMapNo[word.sortedDistinct()]?.filter { it.contains(mustContain) } ?: emptyList()
+            "us" -> pangramMapUs[word.sortedDistinct()]?.filter { it.contains(mustContain) } ?: emptyList()
             else -> emptyList()
         }
     }
@@ -100,13 +100,13 @@ class Anagram {
 
         val f = generateSequence(emptyList<String>() to 1) { (p, c) ->
             (p + permute(letters, c) to c + 1)
-        }.takeWhile { it.second <= letters.length + 1 }.flatMap { (w, _) -> w.asSequence().filter { it.contains(mustContain) } }.map { it.sorted() }.toSet()
-        val suggestions = f.flatMap { words[it.sorted().toSet().joinToString("")] ?: emptyList() }.toList().filter { it.length >= minCount }
+        }.takeWhile { it.second <= letters.length + 1 }.flatMap { (w, _) -> w.asSequence().filter { it.contains(mustContain) } }.map { it.sortedDistinct() }.toSet()
+        val suggestions = f.flatMap { words[it.sortedDistinct()] ?: emptyList() }.toList().filter { it.length >= minCount }
         return suggestions
     }
 
-    private fun String.sorted(locale: Locale = Locale.ENGLISH): String =
-        this.toLowerCase(locale).asSequence().sorted().joinToString("")
+    private fun String.sortedDistinct(locale: Locale = Locale.ENGLISH): String =
+        this.toLowerCase(locale).asSequence().sorted().distinct().joinToString("")
 
     fun anagramsFor(word: String, minChars: Int = 3, language: String = "en"): Map<Int, List<String>> {
 
