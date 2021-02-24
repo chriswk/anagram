@@ -23,7 +23,7 @@ class AnagramTests {
     }
 
     @Test
-    fun aNonExistantWordShouldResultInAnEmptyList() {
+    fun aNonExistentWordShouldResultInAnEmptyList() {
         val a = Anagram()
         val anagrams = a.anagramsFor("lter", 4)
         assertThat(anagrams).isEmpty()

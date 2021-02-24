@@ -44,7 +44,9 @@ spotless {
         ktlint()
     }
 }
-
+test {
+    useJUnitPlatform()
+}
 bootBuildImage {
     imageName = "chriswk/anagram:${project.version}"
 }
