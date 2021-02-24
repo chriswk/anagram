@@ -44,5 +44,4 @@ class PangramTests {
             "uppity",
             "yappy")
     }
-
 }
