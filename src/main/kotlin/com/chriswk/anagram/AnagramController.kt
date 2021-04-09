@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.ui.ModelMap
 
 @Controller
 class AnagramController {
@@ -19,10 +21,29 @@ class AnagramController {
         return anagram.anagramsFor(anagramRequest.word, anagramRequest.minChars)
     }
 
+    @PostMapping("/pangram")
+    fun postPangramsFor(@ModelAttribute("pangram") pangramRequest: PangramRequest, model: ModelMap): String {
+        model["pangrams"] = anagram.pangram(letters = pangramRequest.letters, mustContain = pangramRequest.mustcontain[0], language= pangramRequest.language).sortedByDescending { it.length }
+        return "pangram"
+    }
+
+    @GetMapping("/pangram", produces = ["text/html"])
+    @CrossOrigin
+    fun getPangramsForHtml(
+        @RequestParam("letters") letters: String,
+        @RequestParam("language", defaultValue = "en", required = false) language: String,
+        @RequestParam("mustcontain") mustContain: Char,
+        model: ModelMap
+    ): String {
+        model["pangrams"] = anagram.pangram(letters = letters, mustContain =mustContain, language= language).sortedByDescending { it.length }
+        return "pangram"
+    }
+
+
     @GetMapping("/anagram", produces = ["application/json"])
     @CrossOrigin()
     @ResponseBody
-    fun getAnagramsFor(
+    fun getAnagramsForApi(
         @RequestParam("word") word: String,
         @RequestParam("minCount", required = false, defaultValue = "3") minCount: Int,
         @RequestParam("language", required = false, defaultValue = "en") language: String
@@ -36,7 +57,7 @@ class AnagramController {
     @GetMapping("/pangram", produces = ["application/json"])
     @CrossOrigin
     @ResponseBody
-    fun getPangramsFor(
+    fun getPangramsForApi(
         @RequestParam("letters") letters: String,
         @RequestParam("language", defaultValue = "en", required = false) language: String,
         @RequestParam("mustcontain") mustContain: Char
@@ -44,8 +65,10 @@ class AnagramController {
         return mapOf(Pair("pangrams", anagram.pangram(letters, mustContain = mustContain, language = language).sortedByDescending { it.length }))
     }
 
+    
+
     @GetMapping("/")
     fun redirectToFrontend(): String {
-        return "redirect:https://anagramfrontend.herokuapp.com"
+        return "index"
     }
 }
