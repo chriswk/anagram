@@ -3,15 +3,14 @@ package com.chriswk.anagram
 import java.lang.IllegalArgumentException
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
+import org.springframework.ui.ModelMap
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.ResponseBody
-import org.springframework.ui.ModelMap
-import org.springframework.validation.BindingResult
 
 @Controller
 class AnagramController {
@@ -25,7 +24,7 @@ class AnagramController {
 
     @PostMapping("/pangram")
     fun postPangramsFor(@ModelAttribute("pangram") pangramRequest: PangramForm, model: Model): String {
-        model.addAttribute("pangrams", anagram.pangram(letters = pangramRequest.letters, mustContain = pangramRequest.mustcontain[0], language="us").sortedByDescending { it.length })
+        model.addAttribute("pangrams", anagram.pangram(letters = pangramRequest.letters, mustContain = pangramRequest.mustcontain[0], language = "us").sortedByDescending { it.length })
         return "pangram"
     }
 
@@ -37,10 +36,9 @@ class AnagramController {
         @RequestParam("mustcontain") mustContain: Char,
         model: ModelMap
     ): String {
-        model["pangrams"] = anagram.pangram(letters = letters, mustContain =mustContain, language= language).sortedByDescending { it.length }
+        model["pangrams"] = anagram.pangram(letters = letters, mustContain = mustContain, language = language).sortedByDescending { it.length }
         return "pangram"
     }
-
 
     @GetMapping("/anagram", produces = ["application/json"])
     @CrossOrigin()
@@ -66,8 +64,6 @@ class AnagramController {
     ): Map<String, List<String>> {
         return mapOf(Pair("pangrams", anagram.pangram(letters, mustContain = mustContain, language = language).sortedByDescending { it.length }))
     }
-
-    
 
     @GetMapping("/")
     fun redirectToFrontend(pangramForm: PangramForm = PangramForm("", "")): String {
