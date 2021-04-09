@@ -1,0 +1,13 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title></title>
+</head>
+<body>
+    <ul>
+        <li th:each="pangram, i : ${pangrams}">
+            <span th:text="${pangram}" />
+        </li>
+    </ul>
+</body>
+</html>
