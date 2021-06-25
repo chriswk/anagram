@@ -18,34 +18,34 @@ class Anagram {
 
     val anagramsMapEn: Map<String, List<String>> by lazy {
         englishWords
-            .map { it.toLowerCase(Locale.ENGLISH).trim() }
+            .map { it.lowercase().trim() }
             .groupBy { it.asSequence().sorted().joinToString("") }
     }
     val anagramsMapNo: Map<String, List<String>> by lazy {
         norwegianWords
-            .map { it.toLowerCase(noLocale).trim() }
+            .map { it.lowercase().trim() }
             .groupBy { it.asSequence().sorted().joinToString("") }
     }
 
     val anagramsMapUs: Map<String, List<String>> by lazy {
         usWords
-                .map { it.toLowerCase(Locale.ENGLISH).trim() }
+                .map { it.lowercase(Locale.ENGLISH).trim() }
                 .groupBy { it.asSequence().sorted().joinToString("") }
     }
     val pangramsMapEn: Map<String, List<String>> by lazy {
         englishWords
-            .map { it.toLowerCase(Locale.ENGLISH) }
+            .map { it.lowercase(Locale.ENGLISH) }
             .groupBy { it.asSequence().sorted().toSet().joinToString("") }
     }
     val pangramMapUs: Map<String, List<String>> by lazy {
         usWords
-                .map { it.toLowerCase(Locale.ENGLISH) }
+                .map { it.lowercase(Locale.ENGLISH) }
                 .groupBy { it.asSequence().sorted().toSet().joinToString("") }
     }
 
     val pangramMapNo: Map<String, List<String>> by lazy {
         norwegianWords
-            .map { it.toLowerCase(noLocale) }
+            .map { it.lowercase() }
             .groupBy { it.asSequence().sorted().toSet().joinToString("") }
     }
 
@@ -106,7 +106,7 @@ class Anagram {
     }
 
     private fun String.sorted(locale: Locale = Locale.ENGLISH): String =
-        this.toLowerCase(locale).asSequence().sorted().joinToString("")
+        this.lowercase(locale).asSequence().sorted().joinToString("")
 
     fun anagramsFor(word: String, minChars: Int = 3, language: String = "en"): Map<Int, List<String>> {
 

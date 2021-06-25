@@ -36,7 +36,7 @@ class AnagramController {
         @RequestParam("mustcontain") mustContain: Char,
         model: ModelMap
     ): String {
-        model["pangrams"] = anagram.pangram(letters = letters, mustContain = mustContain, language = language).sortedByDescending { it.length }
+        model["pangrams"] = anagram.pangram(letters = letters.lowercase(), mustContain = mustContain.lowercaseChar(), language = language).sortedByDescending { it.length }
         return "pangram"
     }
 

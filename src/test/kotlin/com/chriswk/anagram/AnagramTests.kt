@@ -42,11 +42,6 @@ class AnagramTests {
     }
 
     @Test
-    fun casingShouldNotMatter() {
-        val a = Anagram()
-    }
-
-    @Test
     fun shouldEliminateDuplicates() {
         val a = Anagram()
         val anagrams = a.anagramsFor("application", 10)
