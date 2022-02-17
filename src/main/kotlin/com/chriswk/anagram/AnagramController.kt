@@ -1,6 +1,5 @@
 package com.chriswk.anagram
 
-import java.lang.IllegalArgumentException
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.ModelMap
@@ -11,21 +10,22 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseBody
+import java.lang.IllegalArgumentException
 
 @Controller
 class AnagramController {
     val anagram: Anagram = Anagram()
 
-    @PostMapping("/anagram", produces = ["application/json"])
+    @PostMapping("/anagram", produces = ["application/json;charset=UTF-8"])
     @ResponseBody
     fun postAnagramsFor(@RequestBody anagramRequest: AnagramRequest): Map<Int, List<String>> {
         return anagram.anagramsFor(anagramRequest.word, anagramRequest.minChars)
     }
 
-    @PostMapping("/pangram")
-    fun postPangramsFor(@ModelAttribute("pangram") pangramRequest: PangramForm, model: Model): String {
-        model.addAttribute("pangrams", anagram.pangram(letters = pangramRequest.letters, mustContain = pangramRequest.mustcontain[0], language = "us").sortedByDescending { it.length })
-        return "pangram"
+    @PostMapping("/pangram", produces = ["application/json;charset=UTF-8"])
+    @ResponseBody
+    fun postPangramsFor(@RequestBody pangramRequest: PangramForm, model: Model): List<String> {
+        return anagram.pangram(letters = pangramRequest.letters, mustContain = pangramRequest.mustcontain[0], language = pangramRequest.language).sortedByDescending { it.length }
     }
 
     @GetMapping("/pangram", produces = ["text/html"])

@@ -29,8 +29,8 @@ class Anagram {
 
     val anagramsMapUs: Map<String, List<String>> by lazy {
         usWords
-                .map { it.lowercase(Locale.ENGLISH).trim() }
-                .groupBy { it.asSequence().sorted().joinToString("") }
+            .map { it.lowercase(Locale.ENGLISH).trim() }
+            .groupBy { it.asSequence().sorted().joinToString("") }
     }
     val pangramsMapEn: Map<String, List<String>> by lazy {
         englishWords
@@ -39,8 +39,8 @@ class Anagram {
     }
     val pangramMapUs: Map<String, List<String>> by lazy {
         usWords
-                .map { it.lowercase(Locale.ENGLISH) }
-                .groupBy { it.asSequence().sorted().toSet().joinToString("") }
+            .map { it.lowercase(Locale.ENGLISH) }
+            .groupBy { it.asSequence().sorted().toSet().joinToString("") }
     }
 
     val pangramMapNo: Map<String, List<String>> by lazy {
@@ -50,16 +50,16 @@ class Anagram {
     }
 
     val maxLengthEn: Int = englishWords
-            .map { it.length }
-            .maxOrNull() ?: 0
+        .map { it.length }
+        .maxOrNull() ?: 0
 
     val maxLengthNo: Int = norwegianWords
-            .map { it.length }
-            .maxOrNull() ?: 0
+        .map { it.length }
+        .maxOrNull() ?: 0
 
     val maxLengthUs: Int = usWords
-            .map { it.length }
-            .maxOrNull() ?: 0
+        .map { it.length }
+        .maxOrNull() ?: 0
 
     private fun readWordsFrom(fileName: String): Sequence<String> {
         return Anagram::class.java.getResource("/$fileName")
@@ -101,7 +101,7 @@ class Anagram {
         val f = generateSequence(emptyList<String>() to 1) { (p, c) ->
             (p + permute(letters, c) to c + 1)
         }.takeWhile { it.second <= letters.length + 1 }.flatMap { (w, _) -> w.asSequence().filter { it.contains(mustContain) } }.map { it.sorted() }.toSet()
-        val suggestions = f.flatMap { words[it.sorted().toSet().joinToString("")] ?: emptyList() }.toList().filter { it.length >= minCount }
+        val suggestions = f.flatMap { words[it.sorted().toSet().joinToString("")] ?: emptyList() }.toSet().filter { it.length >= minCount }.toList().sorted()
         return suggestions
     }
 
