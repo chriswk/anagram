@@ -28,6 +28,7 @@ class AnagramTests {
         val anagrams = a.anagramsFor("lter", 4)
         assertThat(anagrams).isEmpty()
     }
+
     @Test
     fun shouldPermuteStringCorrectly() {
         val a = Anagram()

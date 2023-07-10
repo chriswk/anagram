@@ -109,7 +109,6 @@ class Anagram {
         this.lowercase(locale).asSequence().sorted().joinToString("")
 
     fun anagramsFor(word: String, minChars: Int = 3, language: String = "en"): Map<Int, List<String>> {
-
         return when (language) {
             "en" -> if (word.length > maxLengthEn) emptyMap() else internalAnagramsFor(word, minChars, language)
             "no" -> if (word.length > maxLengthNo) emptyMap() else internalAnagramsFor(word, minChars, language)
@@ -129,14 +128,16 @@ class Anagram {
     fun permute(word: String, charCount: Int): List<String> = combinations(charCount, word.toList()).map { it.joinToString(separator = "") }
 
     fun <T> combinations(n: Int, list: List<T>): List<List<T>> =
-        if (n == 0) listOf(emptyList())
-        else list.flatMapTails { subList ->
+        if (n == 0) {
+            listOf(emptyList())
+        } else list.flatMapTails { subList ->
             combinations(n - 1, subList.tail()).map { (it + subList.first()) }
         }
 
     private fun <T> List<T>.flatMapTails(f: (List<T>) -> (List<List<T>>)): List<List<T>> =
-        if (isEmpty()) emptyList()
-        else f(this) + this.tail().flatMapTails(f)
+        if (isEmpty()) {
+            emptyList()
+        } else f(this) + this.tail().flatMapTails(f)
 
     fun <T> List<T>.tail(): List<T> = drop(1)
 }
