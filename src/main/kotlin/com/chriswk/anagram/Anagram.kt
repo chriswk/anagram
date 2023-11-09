@@ -49,17 +49,20 @@ class Anagram {
             .groupBy { it.asSequence().sorted().toSet().joinToString("") }
     }
 
-    val maxLengthEn: Int = englishWords
-        .map { it.length }
-        .maxOrNull() ?: 0
+    val maxLengthEn: Int =
+        englishWords
+            .map { it.length }
+            .maxOrNull() ?: 0
 
-    val maxLengthNo: Int = norwegianWords
-        .map { it.length }
-        .maxOrNull() ?: 0
+    val maxLengthNo: Int =
+        norwegianWords
+            .map { it.length }
+            .maxOrNull() ?: 0
 
-    val maxLengthUs: Int = usWords
-        .map { it.length }
-        .maxOrNull() ?: 0
+    val maxLengthUs: Int =
+        usWords
+            .map { it.length }
+            .maxOrNull() ?: 0
 
     private fun readWordsFrom(fileName: String): Sequence<String> {
         return Anagram::class.java.getResource("/$fileName")
@@ -72,7 +75,10 @@ class Anagram {
         return readWordsFrom(fileName).filterNot { it.startsWith("(") }.map { it.split("|").first() }
     }
 
-    fun anagramForWord(word: String, language: String = "en"): List<String> {
+    fun anagramForWord(
+        word: String,
+        language: String = "en",
+    ): List<String> {
         return when (language) {
             "en" -> anagramsMapEn[word.sorted()] ?: emptyList()
             "no" -> anagramsMapNo[word.sorted(noLocale)] ?: emptyList()
@@ -81,7 +87,11 @@ class Anagram {
         }
     }
 
-    fun pangramForWord(word: String, language: String = "en", mustContain: Char): List<String> {
+    fun pangramForWord(
+        word: String,
+        language: String = "en",
+        mustContain: Char,
+    ): List<String> {
         return when (language) {
             "en" -> pangramsMapEn[word.sorted().toSet().joinToString("")]?.filter { it.contains(mustContain) } ?: emptyList()
             "no" -> pangramMapNo[word.sorted().toSet().joinToString("")]?.filter { it.contains(mustContain) } ?: emptyList()
@@ -90,25 +100,41 @@ class Anagram {
         }
     }
 
-    fun pangram(letters: String, minCount: Int = 4, mustContain: Char, language: String = "en"): List<String> {
-        val words = when (language) {
-            "en" -> pangramsMapEn
-            "no" -> pangramMapNo
-            "us" -> pangramMapUs
-            else -> emptyMap()
-        }
+    fun pangram(
+        letters: String,
+        minCount: Int = 4,
+        mustContain: Char,
+        language: String = "en",
+    ): List<String> {
+        val words =
+            when (language) {
+                "en" -> pangramsMapEn
+                "no" -> pangramMapNo
+                "us" -> pangramMapUs
+                else -> emptyMap()
+            }
 
-        val f = generateSequence(emptyList<String>() to 1) { (p, c) ->
-            (p + permute(letters, c) to c + 1)
-        }.takeWhile { it.second <= letters.length + 1 }.flatMap { (w, _) -> w.asSequence().filter { it.contains(mustContain) } }.map { it.sorted() }.toSet()
-        val suggestions = f.flatMap { words[it.sorted().toSet().joinToString("")] ?: emptyList() }.toSet().filter { it.length >= minCount }.toList().sorted()
+        val f =
+            generateSequence(emptyList<String>() to 1) { (p, c) ->
+                (p + permute(letters, c) to c + 1)
+            }.takeWhile { it.second <= letters.length + 1 }.flatMap {
+                    (w, _) ->
+                w.asSequence().filter { it.contains(mustContain) }
+            }.map { it.sorted() }.toSet()
+        val suggestions =
+            f.flatMap {
+                words[it.sorted().toSet().joinToString("")] ?: emptyList()
+            }.toSet().filter { it.length >= minCount }.toList().sorted()
         return suggestions
     }
 
-    private fun String.sorted(locale: Locale = Locale.ENGLISH): String =
-        this.lowercase(locale).asSequence().sorted().joinToString("")
+    private fun String.sorted(locale: Locale = Locale.ENGLISH): String = this.lowercase(locale).asSequence().sorted().joinToString("")
 
-    fun anagramsFor(word: String, minChars: Int = 3, language: String = "en"): Map<Int, List<String>> {
+    fun anagramsFor(
+        word: String,
+        minChars: Int = 3,
+        language: String = "en",
+    ): Map<Int, List<String>> {
         return when (language) {
             "en" -> if (word.length > maxLengthEn) emptyMap() else internalAnagramsFor(word, minChars, language)
             "no" -> if (word.length > maxLengthNo) emptyMap() else internalAnagramsFor(word, minChars, language)
@@ -117,7 +143,11 @@ class Anagram {
         }
     }
 
-    private fun internalAnagramsFor(word: String, minChars: Int, language: String): Map<Int, List<String>> {
+    private fun internalAnagramsFor(
+        word: String,
+        minChars: Int,
+        language: String,
+    ): Map<Int, List<String>> {
         return IntRange(minChars, word.length).flatMap {
             permute(word, it).flatMap { w ->
                 anagramForWord(w, language)
@@ -125,19 +155,29 @@ class Anagram {
         }.asSequence().distinct().groupBy { it.length }.mapValues { it.value.sorted() }
     }
 
-    fun permute(word: String, charCount: Int): List<String> = combinations(charCount, word.toList()).map { it.joinToString(separator = "") }
+    fun permute(
+        word: String,
+        charCount: Int,
+    ): List<String> = combinations(charCount, word.toList()).map { it.joinToString(separator = "") }
 
-    fun <T> combinations(n: Int, list: List<T>): List<List<T>> =
+    fun <T> combinations(
+        n: Int,
+        list: List<T>,
+    ): List<List<T>> =
         if (n == 0) {
             listOf(emptyList())
-        } else list.flatMapTails { subList ->
-            combinations(n - 1, subList.tail()).map { (it + subList.first()) }
+        } else {
+            list.flatMapTails { subList ->
+                combinations(n - 1, subList.tail()).map { (it + subList.first()) }
+            }
         }
 
     private fun <T> List<T>.flatMapTails(f: (List<T>) -> (List<List<T>>)): List<List<T>> =
         if (isEmpty()) {
             emptyList()
-        } else f(this) + this.tail().flatMapTails(f)
+        } else {
+            f(this) + this.tail().flatMapTails(f)
+        }
 
     fun <T> List<T>.tail(): List<T> = drop(1)
 }

@@ -17,14 +17,23 @@ class AnagramController {
 
     @PostMapping("/anagram", produces = ["application/json;charset=UTF-8"])
     @ResponseBody
-    fun postAnagramsFor(@RequestBody anagramRequest: AnagramRequest): Map<Int, List<String>> {
+    fun postAnagramsFor(
+        @RequestBody anagramRequest: AnagramRequest,
+    ): Map<Int, List<String>> {
         return anagram.anagramsFor(anagramRequest.word, anagramRequest.minChars)
     }
 
     @PostMapping("/pangram", produces = ["application/json;charset=UTF-8"])
     @ResponseBody
-    fun postPangramsFor(@RequestBody pangramRequest: PangramForm, model: Model): List<String> {
-        return anagram.pangram(letters = pangramRequest.letters, mustContain = pangramRequest.mustcontain[0], language = pangramRequest.language).sortedByDescending { it.length }
+    fun postPangramsFor(
+        @RequestBody pangramRequest: PangramForm,
+        model: Model,
+    ): List<String> {
+        return anagram.pangram(
+            letters = pangramRequest.letters,
+            mustContain = pangramRequest.mustcontain[0],
+            language = pangramRequest.language,
+        ).sortedByDescending { it.length }
     }
 
     @GetMapping("/pangram", produces = ["text/html"])
@@ -35,7 +44,12 @@ class AnagramController {
         @RequestParam("mustcontain") mustContain: Char,
         model: ModelMap,
     ): String {
-        model["pangrams"] = anagram.pangram(letters = letters.lowercase(), mustContain = mustContain.lowercaseChar(), language = language).sortedByDescending { it.length }
+        model["pangrams"] =
+            anagram.pangram(
+                letters = letters.lowercase(),
+                mustContain = mustContain.lowercaseChar(),
+                language = language,
+            ).sortedByDescending { it.length }
         return "pangram"
     }
 
@@ -61,7 +75,13 @@ class AnagramController {
         @RequestParam("language", defaultValue = "en", required = false) language: String,
         @RequestParam("mustcontain") mustContain: Char,
     ): Map<String, List<String>> {
-        return mapOf(Pair("pangrams", anagram.pangram(letters, mustContain = mustContain, language = language).sortedByDescending { it.length }))
+        return mapOf(
+            Pair(
+                "pangrams",
+                anagram.pangram(letters, mustContain = mustContain, language = language)
+                    .sortedByDescending { it.length },
+            ),
+        )
     }
 
     @GetMapping("/")
